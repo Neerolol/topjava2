@@ -1,0 +1,7 @@
+<templateSet group="Java">
+  <template name="scon" value="java.util.Scanner console = new Scanner(System.in);" description="scanner console" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_STATEMENT" value="true" />
+    </context>
+  </template>
+</templateSet>
