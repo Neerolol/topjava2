@@ -8,6 +8,8 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -34,6 +36,8 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO Implement by streams
+        Map<LocalDateTime, Integer> calSum = meals.stream()
+                .collect(Collectors.groupingBy(sum->sum.getDateTime().toLocalDate(),Collectors.summingInt(UserMeal::getCalories)));
         return null;
     }
 }
