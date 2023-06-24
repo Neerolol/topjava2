@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExcess;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
@@ -23,7 +24,7 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
-        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        List<UserMealWithExcess> mealsTo = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
 //        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
@@ -35,9 +36,13 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO Implement by streams
-        Map<LocalDateTime, Integer> calSum = meals.stream()
-                .collect(Collectors.groupingBy(sum->sum.getDateTime().toLocalDate(),Collectors.summingInt(UserMeal::getCalories)));
-        return null;
+        Map<LocalDate, Integer> calSum = meals.stream()
+                .collect(Collectors.groupingBy(sum -> sum.getDateTime().toLocalDate(),
+                Collectors.summingInt(UserMeal::getCalories)
+        ));
+        return meals.stream()
+                .filter(sum -> TimeUtil.isBetweenHalfOpen(sum.getDateTime().toLocalTime(),startTime,endTime))
+                .map(sum->new UserMealWithExcess(sum.getDateTime(),sum.getDescription(),sum.getCalories(),calSum.get(sum.getDateTime().toLocalDate())>caloriesPerDay))
+                .collect(Collectors.toList());
     }
 }
